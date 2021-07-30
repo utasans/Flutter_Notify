@@ -68,6 +68,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: <Widget>[
+            Text('Token : $token'),
             Text(notificationAlert),
             Text(
               messageTitle,
