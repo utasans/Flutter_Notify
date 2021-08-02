@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
@@ -32,6 +34,7 @@ class _MyHomePageState extends State<MyHomePage> {
   String messageTitle = "Kosong";
   String notificationAlert = "Kosong";
   String token = '';
+  TextEditingController textEdit = TextEditingController();
 
   FirebaseMessaging firebaseMessaging = FirebaseMessaging();
 
@@ -40,13 +43,13 @@ class _MyHomePageState extends State<MyHomePage> {
     firebaseMessaging.configure(
       onMessage: (message) async {
         setState(() {
-          messageTitle = message["notification"]["title"];
+          messageTitle = jsonEncode(message);
           notificationAlert = "New Notification Alert";
         });
       },
       onResume: (message) async {
         setState(() {
-          messageTitle = message["data"]["title"];
+          messageTitle = jsonEncode(message);
           notificationAlert = "Application opened from Notification";
         });
       },
@@ -54,6 +57,7 @@ class _MyHomePageState extends State<MyHomePage> {
     firebaseMessaging.getToken().then((token) => setState(() {
           debugPrint(token);
           this.token = token;
+          textEdit.text = token;
         }));
     super.initState();
   }
@@ -68,7 +72,19 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Center(
         child: Column(
           children: <Widget>[
-            Text('Token : $token'),
+            Text('Token :'),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Wrap(
+                children: [
+                  TextField(
+                    controller: textEdit,
+                    maxLines: 5,
+                  )
+                ],
+              ),
+            ),
+            SizedBox(height: 20),
             Text(notificationAlert),
             Text(
               messageTitle,
